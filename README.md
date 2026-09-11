@@ -34,6 +34,7 @@ The game features a 5×5 slot grid, Mahjong-inspired symbols, left-to-right winn
 * Free-spin counter
 * Balance and betting system
 * Win amount display
+* Betting range: 1 ~ 10
 
 ## Tech Stack
 

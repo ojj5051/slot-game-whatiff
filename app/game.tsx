@@ -54,6 +54,8 @@ class SlotScene extends Phaser.Scene {
   private isFreeSpin = false;
 
   private balanceText!: Phaser.GameObjects.Text;
+  private decreaseBetButton!: Phaser.GameObjects.Text;
+  private increaseBetButton!: Phaser.GameObjects.Text;
   private winText!: Phaser.GameObjects.Text;
   private freeSpinText!: Phaser.GameObjects.Text;
 
@@ -91,6 +93,7 @@ class SlotScene extends Phaser.Scene {
     this.createBalance();
     this.createGrid();
     this.createSpinButton();
+    this.createBetControls();
   }
 
   createBackground() {
@@ -134,6 +137,53 @@ class SlotScene extends Phaser.Scene {
     });
 
     this.freeSpinText.setOrigin(0.5);
+  }
+
+  createBetControls() {
+    const minBet = 1;
+    const maxBet = 10;
+
+    this.decreaseBetButton = this.add
+      .text(300, 630, "−", {
+        fontSize: "32px",
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { left: 15, right: 15, top: 5, bottom: 5 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    this.increaseBetButton = this.add
+      .text(600, 630, "+", {
+        fontSize: "32px",
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { left: 15, right: 15, top: 5, bottom: 5 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+
+    this.decreaseBetButton.on("pointerdown", () => {
+      this.bet = Math.max(minBet, this.bet - 1);
+
+      this.updateBetText();
+    });
+
+    this.increaseBetButton.on("pointerdown", () => {
+      this.bet = Math.min(maxBet, this.bet + 1);
+
+      this.updateBetText();
+    });
+
+    [this.decreaseBetButton, this.increaseBetButton].forEach((btn) => {
+      btn.on("pointerover", () => btn.setBackgroundColor("#555555"));
+      btn.on("pointerout", () => btn.setBackgroundColor("#333333"));
+    });
+  }
+
+  updateBetText() {
+    this.balanceText.setText(`Balance: ${this.balance}    Bet: ${this.bet}`);
   }
 
   checkFree(grid: string[][]) {
