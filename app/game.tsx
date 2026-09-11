@@ -93,7 +93,6 @@ class SlotScene extends Phaser.Scene {
     this.createBalance();
     this.createGrid();
     this.createSpinButton();
-    this.createTestButton();
   }
 
   // -----------------------------
@@ -229,25 +228,6 @@ class SlotScene extends Phaser.Scene {
       if (!this.isFreeSpin) {
         this.spin();
       }
-    });
-  }
-
-  createTestButton() {
-    const button = this.add
-      .rectangle(700, 630, 140, 50, 0x555555)
-      .setInteractive({
-        useHandCursor: true,
-      });
-
-    this.add
-      .text(700, 630, "TEST WIN", {
-        fontSize: "20px",
-        color: "#ffffff",
-      })
-      .setOrigin(0.5);
-
-    button.on("pointerdown", () => {
-      this.testWinningCondition();
     });
   }
 
@@ -626,41 +606,6 @@ class SlotScene extends Phaser.Scene {
 
       this.streakMultiplier = Math.min(this.streakMultiplier + 1, 4);
     });
-  }
-
-  testWinningCondition() {
-    const testGrid = [
-      ["2萬", "2筒", "2萬", "4筒", "5萬"],
-      ["2萬", "中", "2萬", "中", "7萬"],
-      ["2萬", "發", "2萬", "9筒", "1筒"],
-      ["6萬", "中", "2萬", "中", "4萬"],
-      ["6萬", "6萬", "2萬", "8萬", "白"],
-    ];
-
-    // Put test result onto the actual game
-    for (let col = 0; col < COLS; col++) {
-      for (let row = 0; row < ROWS; row++) {
-        this.grid[col][row].setText(testGrid[col][row]);
-      }
-    }
-
-    const wins = this.findWins(testGrid);
-
-    if (wins.length > 0) {
-      const winAmount = wins.length * this.bet * 5;
-
-      this.balance += winAmount;
-
-      this.winText.setText(`🎉 WIN ${winAmount}! 🎉`);
-
-      this.highlightWins(wins);
-
-      this.playWinAnimation(wins);
-    } else {
-      this.winText.setText("No win");
-    }
-
-    this.updateBalance();
   }
 
   // -----------------------------
