@@ -48,7 +48,7 @@ class SlotScene extends Phaser.Scene {
   private balance = 1000;
   private bet = 10;
 
-  private cascadeMultiplier = 1;
+  private streakMultiplier = 1;
 
   private freeSpins = 0;
   private isFreeSpin = false;
@@ -264,7 +264,7 @@ class SlotScene extends Phaser.Scene {
     }
 
     if (!this.isFreeSpin) {
-      this.cascadeMultiplier = 1;
+      this.streakMultiplier = 1;
     }
 
     this.spinning = true;
@@ -495,7 +495,7 @@ class SlotScene extends Phaser.Scene {
     if (wins.length === 0) {
       this.winText.setText("NO WIN");
 
-      this.cascadeMultiplier = 1;
+      this.streakMultiplier = 1;
       this.spinning = false;
 
       // Continue free spins
@@ -511,11 +511,11 @@ class SlotScene extends Phaser.Scene {
       return;
     }
 
-    const win = wins.length * this.bet * this.cascadeMultiplier;
+    const win = wins.length * this.bet * this.streakMultiplier;
 
     this.balance += win;
 
-    this.winText.setText(`${this.cascadeMultiplier}X WIN ${win}!`);
+    this.winText.setText(`${this.streakMultiplier}X WIN ${win}!`);
 
     this.updateBalance();
 
@@ -526,7 +526,7 @@ class SlotScene extends Phaser.Scene {
     this.time.delayedCall(2000, () => {
       this.removeWinningTiles(wins);
 
-      this.cascadeMultiplier = Math.min(this.cascadeMultiplier + 1, 4);
+      this.streakMultiplier = Math.min(this.streakMultiplier + 1, 4);
     });
   }
 
@@ -590,18 +590,18 @@ class SlotScene extends Phaser.Scene {
       }
     }
 
-    // Check again after cascade
+    // Check again after streak
     this.time.delayedCall(1000, () => {
       this.checkWin();
     });
   }
 
-  checkCascade() {
+  checkstreak() {
     const result = this.getResult();
     const wins = this.findWins(result);
 
     if (wins.length === 0) {
-      console.log("Cascade finished");
+      console.log("streak finished");
 
       this.updateBalance();
 
@@ -609,13 +609,13 @@ class SlotScene extends Phaser.Scene {
       return;
     }
 
-    console.log("Cascade win:", wins);
+    console.log("streak win:", wins);
 
-    const win = wins.length * this.bet * this.cascadeMultiplier;
+    const win = wins.length * this.bet * this.streakMultiplier;
 
     this.balance += win;
 
-    this.winText.setText(`WIN ${win} (${this.cascadeMultiplier}x)!`);
+    this.winText.setText(`WIN ${win} (${this.streakMultiplier}x)!`);
 
     this.highlightWins(wins);
 
@@ -624,7 +624,7 @@ class SlotScene extends Phaser.Scene {
     this.time.delayedCall(2000, () => {
       this.removeWinningTiles(wins);
 
-      this.cascadeMultiplier = Math.min(this.cascadeMultiplier + 1, 4);
+      this.streakMultiplier = Math.min(this.streakMultiplier + 1, 4);
     });
   }
 
