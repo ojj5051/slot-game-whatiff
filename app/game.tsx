@@ -61,29 +61,27 @@ class SlotScene extends Phaser.Scene {
     super("SlotScene");
   }
 
-  private getRandomSymbolForColumn(hasScatter: boolean): {
+  private getRandomSymbolForColumn(hasFree: boolean): {
     symbol: string;
-    hasScatter: boolean;
+    hasFree: boolean;
   } {
-    // Free spins: never generate scatter
     if (this.isFreeSpin) {
       return {
         symbol: Phaser.Utils.Array.GetRandom(FREE_SPIN_SYMBOLS),
-        hasScatter,
+        hasFree,
       };
     }
 
-    // Normal spin: maximum 1 scatter per column
-    if (!hasScatter && Math.random() < 0.15) {
+    if (!hasFree && Math.random() < 0.15) {
       return {
         symbol: FREE,
-        hasScatter: true,
+        hasFree: true,
       };
     }
 
     return {
       symbol: Phaser.Utils.Array.GetRandom(NORMAL_SYMBOLS),
-      hasScatter,
+      hasFree,
     };
   }
 
@@ -95,10 +93,6 @@ class SlotScene extends Phaser.Scene {
     this.createSpinButton();
   }
 
-  // -----------------------------
-  // Background
-  // -----------------------------
-
   createBackground() {
     this.cameras.main.setBackgroundColor("#171426");
 
@@ -106,10 +100,6 @@ class SlotScene extends Phaser.Scene {
 
     this.add.rectangle(450, 330, 470, 450, 0x15111f);
   }
-
-  // -----------------------------
-  // Title
-  // -----------------------------
 
   createTitle() {
     this.add
@@ -120,10 +110,6 @@ class SlotScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
   }
-
-  // -----------------------------
-  // Balance
-  // -----------------------------
 
   createBalance() {
     this.balanceText = this.add
@@ -150,8 +136,8 @@ class SlotScene extends Phaser.Scene {
     this.freeSpinText.setOrigin(0.5);
   }
 
-  checkScatter(grid: string[][]) {
-    const scatters: {
+  checkFree(grid: string[][]) {
+    const freeSpins: {
       col: number;
       row: number;
     }[] = [];
@@ -159,17 +145,13 @@ class SlotScene extends Phaser.Scene {
     for (let col = 0; col < COLS; col++) {
       for (let row = 0; row < ROWS; row++) {
         if (grid[col][row] === FREE) {
-          scatters.push({ col, row });
+          freeSpins.push({ col, row });
         }
       }
     }
 
-    return scatters;
+    return freeSpins;
   }
-
-  // -----------------------------
-  // Create 5x5 grid
-  // -----------------------------
 
   createGrid() {
     for (let col = 0; col < COLS; col++) {
@@ -196,10 +178,6 @@ class SlotScene extends Phaser.Scene {
       }
     }
   }
-
-  // -----------------------------
-  // Spin button
-  // -----------------------------
 
   createSpinButton() {
     const button = this.add
@@ -230,10 +208,6 @@ class SlotScene extends Phaser.Scene {
       }
     });
   }
-
-  // -----------------------------
-  // Spin
-  // -----------------------------
 
   spin() {
     if (this.spinning) return;
@@ -298,10 +272,6 @@ class SlotScene extends Phaser.Scene {
     });
   }
 
-  // -----------------------------
-  // Spin individual column
-  // -----------------------------
-
   spinColumn(col: number, duration: number, onComplete: () => void) {
     const interval = 70;
 
@@ -310,14 +280,14 @@ class SlotScene extends Phaser.Scene {
       repeat: Math.floor(duration / interval),
 
       callback: () => {
-        let hasScatter = false;
+        let hasFree = false;
 
         for (let row = 0; row < ROWS; row++) {
-          const result = this.getRandomSymbolForColumn(hasScatter);
+          const result = this.getRandomSymbolForColumn(hasFree);
 
           this.grid[col][row].setText(result.symbol);
 
-          hasScatter = result.hasScatter;
+          hasFree = result.hasFree;
         }
       },
 
@@ -328,23 +298,19 @@ class SlotScene extends Phaser.Scene {
       timer.remove();
 
       // Final symbols
-      let hasScatter = false;
+      let hasFree = false;
 
       for (let row = 0; row < ROWS; row++) {
-        const result = this.getRandomSymbolForColumn(hasScatter);
+        const result = this.getRandomSymbolForColumn(hasFree);
 
         this.grid[col][row].setText(result.symbol);
 
-        hasScatter = result.hasScatter;
+        hasFree = result.hasFree;
       }
 
       onComplete();
     });
   }
-
-  // -----------------------------
-  // Finish spin
-  // -----------------------------
 
   finishSpin() {
     const result = this.getResult();
@@ -367,10 +333,6 @@ class SlotScene extends Phaser.Scene {
     this.removeWinningTiles(wins);
   }
 
-  // -----------------------------
-  // Get current grid
-  // -----------------------------
-
   getResult(): string[][] {
     const result: string[][] = [];
 
@@ -384,10 +346,6 @@ class SlotScene extends Phaser.Scene {
 
     return result;
   }
-
-  // -----------------------------
-  // Find winning clusters
-  // -----------------------------
 
   findWins(grid: string[][]) {
     const wins: {
@@ -438,12 +396,8 @@ class SlotScene extends Phaser.Scene {
   checkWin() {
     const result = this.getResult();
 
-    // =================================
-    // Check SCATTER
-    // =================================
-
     if (!this.isFreeSpin) {
-      const scatters = this.checkScatter(result);
+      const scatters = this.checkFree(result);
 
       console.log("Scatters:", scatters);
 
@@ -463,10 +417,6 @@ class SlotScene extends Phaser.Scene {
         return;
       }
     }
-
-    // =================================
-    // Normal win
-    // =================================
 
     const wins = this.findWins(result);
 
@@ -608,10 +558,6 @@ class SlotScene extends Phaser.Scene {
     });
   }
 
-  // -----------------------------
-  // Highlight winning tiles
-  // -----------------------------
-
   highlightWins(
     wins: {
       col: number;
@@ -624,10 +570,6 @@ class SlotScene extends Phaser.Scene {
       tile.setTint(0xffff00);
     }
   }
-
-  // -----------------------------
-  // Win animation
-  // -----------------------------
 
   playWinAnimation(
     wins: {
@@ -648,10 +590,6 @@ class SlotScene extends Phaser.Scene {
     }
   }
 
-  // -----------------------------
-  // Clear highlights
-  // -----------------------------
-
   clearHighlights() {
     for (let col = 0; col < COLS; col++) {
       for (let row = 0; row < ROWS; row++) {
@@ -660,10 +598,6 @@ class SlotScene extends Phaser.Scene {
       }
     }
   }
-
-  // -----------------------------
-  // Update balance
-  // -----------------------------
 
   updateBalance() {
     this.balanceText.setText(`Balance: ${this.balance}    Bet: ${this.bet}`);
@@ -678,10 +612,6 @@ class SlotScene extends Phaser.Scene {
     }
   }
 }
-
-// -----------------------------
-// Phaser configuration
-// -----------------------------
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
