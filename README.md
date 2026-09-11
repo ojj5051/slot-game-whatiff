@@ -2,7 +2,7 @@
 
 A web-based Mahjong-style slot game built with **Phaser 3** and **TypeScript**.
 
-The game features a 5×5 slot grid, Mahjong-inspired symbols, left-to-right winning conditions, cascading wins, win multipliers, scatter symbols, and free spins.
+The game features a 5×5 slot grid, Mahjong-inspired symbols, left-to-right winning conditions, cascading wins, win multipliers, free symbols, and free spins.
 
 ## Features
 
@@ -27,10 +27,10 @@ The game features a 5×5 slot grid, Mahjong-inspired symbols, left-to-right winn
   * 2×
   * 3×
   * 4× maximum
-* Scatter symbol
-* 3 or more scatters trigger 12 free spins
-* Maximum 1 scatter per column
-* Scatter symbols are disabled during free spins
+* Free symbol
+* 3 or more frees trigger 12 free spins
+* Maximum 1 free per column
+* Free symbols are disabled during free spins
 * Free-spin counter
 * Balance and betting system
 * Win amount display
